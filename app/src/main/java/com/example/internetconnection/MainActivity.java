@@ -11,8 +11,13 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,40 +25,42 @@ import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button buttonOne, buttonTwo;
     CoordinatorLayout coordinatorLayout;
+    private WebView mWebview;
+    private ImageView imageView;
 
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        buttonOne = findViewById(R.id.buttonOne);
-        buttonTwo = findViewById(R.id.buttonTwo);
-
+        imageView = (ImageView) findViewById(R.id.no_Internet_Img);
         coordinatorLayout = this.<CoordinatorLayout>findViewById(R.id.coordinatorLayout);
-        if (isConnected(getApplicationContext()))
-        {
-            buttonOne.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            buttonTwo.setVisibility(View.VISIBLE);
-        }
+        if (isConnected(getApplicationContext())) {
+            //buttonOne.setVisibility(View.VISIBLE);
+            mWebview = (WebView) findViewById(R.id.web_View);
+            WebSettings webSettings = mWebview.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            imageView.setVisibility(View.INVISIBLE);
+            mWebview.loadUrl("http://www.test.abmtraders.com/");
+            Log.i("Zzzzzz", "connected");
+            mWebview.setWebViewClient(new WebViewClient());
 
-        buttonOne.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Internet Connected!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        buttonTwo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "No Internet connection!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        } else {
+            //error msg
+            imageView.setVisibility(View.VISIBLE);
+            Toast.makeText(MainActivity.this, "No Internet connection!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (mWebview.canGoBack()) {
+            mWebview.goBack();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @SuppressLint("ResourceAsColor")
