@@ -25,7 +25,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
 
-    CoordinatorLayout coordinatorLayout;
     private WebView mWebview;
     private ImageView imageView;
 
@@ -35,9 +34,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imageView = (ImageView) findViewById(R.id.no_Internet_Img);
-        coordinatorLayout = this.<CoordinatorLayout>findViewById(R.id.coordinatorLayout);
+
         if (isConnected(getApplicationContext())) {
-            //buttonOne.setVisibility(View.VISIBLE);
             mWebview = (WebView) findViewById(R.id.web_View);
             WebSettings webSettings = mWebview.getSettings();
             webSettings.setJavaScriptEnabled(true);
@@ -49,18 +47,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             //error msg
             imageView.setVisibility(View.VISIBLE);
-            Toast.makeText(MainActivity.this, "No Internet connection!", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onBackPressed() {
-
-        if (mWebview.canGoBack()) {
-            mWebview.goBack();
-        } else {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
     }
 
     @SuppressLint("ResourceAsColor")
@@ -72,34 +64,12 @@ public class MainActivity extends AppCompatActivity {
             android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
             if (mobile != null && mobile.isConnectedOrConnecting() || wifi != null && wifi.isConnectedOrConnecting()) {
-                final Snackbar snackbar = Snackbar.make(coordinatorLayout, "Internet Connected!", Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Close", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                            }
-                        }).setActionTextColor(Color.WHITE);
-
-                View snackView = snackbar.getView();
-
-                snackView.setBackgroundColor(R.color.colorPrimary);
-
-                snackbar.show();
                 return true;
 
             } else {
                 return false;
             }
         } else {
-            Snackbar snackbar = Snackbar.make(coordinatorLayout, "No Internet Connection!", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Close", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                        }
-                    })
-                    .setActionTextColor(Color.WHITE);
-            View snackView = snackbar.getView();
-            snackView.setBackgroundColor(R.color.colorPrimary);
-            snackbar.show();
             return false;
         }
     }
